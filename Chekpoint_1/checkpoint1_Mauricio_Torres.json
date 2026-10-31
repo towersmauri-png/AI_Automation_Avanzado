@@ -1,0 +1,526 @@
+{
+  "name": "Agencia Viajes",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "a3f1f1e0-923f-4edc-ac10-768f79bd8341",
+      "name": "Ingreso de Consultas",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "7b5e3eb8-b7b8-4c08-8ba8-ba21118125a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "KN7AAmOWGed2FaFR",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "[ROL Y ÁMBITO]\nSos un Agente de Viajes Senior de Élite para una compañía corporativa. Tu ámbito es experto en logística internacional, optimización de presupuestos de viaje y diseño de itinerarios personalizados. Tu tono debe ser altamente profesional, sofisticado, conciso y orientado al servicio premium.\n\n[OBJETIVO OPERATIVO]\nTu meta principal es asistir al usuario en la planificación y cierre de su viaje cumpliendo estrictamente con:\n1. Identificar en un registro estructurado las necesidades clave: Extraer de forma sutil fechas de viaje, destino y cantidad de pasajeros.\n2. Fomentar el cierre de la venta: Guiar la conversación para que el usuario solicite la cotización formal o la confirmación en el menor número de interacciones posible.\n\n[REGLAS DE USO DE HERRAMIENTAS]\n- Usá la herramienta \"Registrar_Consultas” SOLO cuando tengas datos claves suficientes: fecha, destino y cantidad de pasajeros.\n- Si falta un dato clave, hacé una única pregunta clara antes de registrar.\n- No inventes información. Si un dato no fue provisto, dejalo vacío o marcá \"No informado\".\n- Clasificá la consulta de acuerdo al destino como destino Caribe, Europa, Estados Unidos o Exóticos.\n- Ante cualquier queja o solicitud de asistencia humana, derivá el caso a un asesor humano.\n\n[PROTOCOLO DE ESCALAMIENTO / GUARDRAILS]\n-NO tenés autorización para: inventar disponibilidad ni precios sin consultar fuentes reales, confirmar reservas, procesar reembolsos directamente (deformando quejas al departamento de posventa), ni exceder el límite de 3 opciones por servicio para evitar la fatiga de decisión.\n- Si el cliente insiste en confirmar un servicio, detené la operación y deriva a un asesor humano.\n\n[ESTILO]\n- Escribí en español rioplatense estándar, claro, profesional y sofisticado.\n- Exclusión total de lenguaje inclusivo: Está estrictamente prohibido el uso de desinencias neutras como 'e', 'x' o '@' (ej. 'todixs', 'bienvenides', 'pasajerxs').\n- Usá el castellano normativo y respetá las formas gramaticales tradicionales (masculino genérico plural o redacciones institucionales neutras como 'el personal', 'la clientela').\n- Sé breve, específico y orientado a la operación.",
+          "maxIterations": 7
+        }
+      },
+      "id": "9d4b3089-05dd-4361-a6b3-b8ae9f704344",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        208,
+        16
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "id": "812fd450-945b-471e-8857-286e7f83728d",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        112,
+        208
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "4YwdxNydCvUGJBU4",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Esta herramienta registra consultas de clientes en Google Sheets.\n\nUSÁ esta herramienta cuando el cliente haya proporcionado como mínimo:\n- un destino;\n- una fecha de viaje;\n- cantidad de pasajeros.\n\nAntes de ejecutar la herramienta:\n1. Identificá el destino principal reportado por el cliente.\n2. Clasificá la categoría del destino como Caribe, Europa, Estados Unidos o Exóticos.\n3. Generá un resumen breve y operativo de la consulta.\n4. Definí una próxima acción recomendada.\n\nREGLAS DE CATEGORIAS DEL DESTINO:\n- EUROPA: Todos los destinos de Europa y Medio Oriente.\n- CARIBE: Países del Caribe\n- ESTADOS UNIDOS: Estados Unidos (USA)\n\nCuando estén disponibles los datos mínimos, ejecutá esta herramienta exactamente UNA vez.\n\nNo inventes información faltante.\nSi el destino o las fechas de viaje o cantidad de pasajeros no fueron informados, utilizá \"No informado\".\n\nSi el mensaje contiene varios destinos, registrá como destino principal el de mayor importancia e incluí los demás en el resumen.\n\nNo uses esta herramienta para consultas comerciales, legales o administrativas que estén fuera del ámbito de consultas.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI",
+          "mode": "list",
+          "cachedResultName": "Registrar_Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Base_Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Destino": "={{ $fromAI('Destino', 'Destino principal del viaje informado por el cliente, o No informado', 'string') }}",
+            "Fecha_Inicio": "={{ $fromAI('Fecha_Inicio', 'Fecha de inicio del viaje, o No informado', 'string') }}",
+            "Fecha_Regreso": "={{ $fromAI('Fecha_Regreso', 'Fecha de regreso del viaje, o No informado', 'string') }}",
+            "Cantidad_Personas": "={{ $fromAI('Cantidad_Personas', 'Cantidad de pasajeros, o No informado', 'string') }}",
+            "Resumen": "={{ $fromAI('Resumen', 'Resumen breve y operativo de la consulta, incluyendo la categoria del destino (Caribe, Europa, Estados Unidos o Exoticos) y otros destinos mencionados', 'string') }}",
+            "Proxima Accion": "={{ $fromAI('Proxima_Accion', 'Proxima accion recomendada para el asesor', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Destino",
+              "displayName": "Destino",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha_Inicio",
+              "displayName": "Fecha_Inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha_Regreso",
+              "displayName": "Fecha_Regreso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cantidad_Personas",
+              "displayName": "Cantidad_Personas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resumen",
+              "displayName": "Resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Proxima Accion",
+              "displayName": "Proxima Accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "fa83732c-a1b7-495a-b58b-17ae7bba59bc",
+      "name": "Registrar_Consultas",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6F1EthjCx5aSMy1s",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI",
+          "mode": "list",
+          "cachedResultName": "Registrar_Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 433595750,
+          "mode": "list",
+          "cachedResultName": "Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit#gid=433595750"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_hora": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm:ss\") }}",
+            "chat_id": "={{ $(\"Ingreso de Consultas\").item.json.message.chat.id }}",
+            "usuario": "={{ $(\"Ingreso de Consultas\").item.json.message.from.username || $(\"Ingreso de Consultas\").item.json.message.from.first_name }}",
+            "mensaje": "={{ $(\"Ingreso de Consultas\").item.json.message.text }}",
+            "respuesta_ia": "",
+            "estado": "ERROR",
+            "error_detalle": "={{ $json.error?.message || $json.error || \"Error desconocido\" }}",
+            "execution_id": "={{ $execution.id }}"
+          },
+          "schema": [
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "usuario",
+              "displayName": "usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "respuesta_ia",
+              "displayName": "respuesta_ia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_detalle",
+              "displayName": "error_detalle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "af2dad8b-061d-4543-9cd8-248f761eb955",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        96
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6F1EthjCx5aSMy1s",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5737433683",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d257d1fa-e7c4-4a40-892c-fdafe1ae73ab",
+      "name": "Telegram Respuesta",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        -48
+      ],
+      "webhookId": "6bd4a0a2-6251-4d07-92c6-52966f62602b",
+      "credentials": {
+        "telegramApi": {
+          "id": "KN7AAmOWGed2FaFR",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI",
+          "mode": "list",
+          "cachedResultName": "Registrar_Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 433595750,
+          "mode": "list",
+          "cachedResultName": "Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A08o73eGrhMuPPNXRYVfR2FzuoJUKk_2J9co3UN1SlI/edit#gid=433595750"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_hora": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm:ss\") }}",
+            "chat_id": "={{ $(\"Ingreso de Consultas\").item.json.message.chat.id }}",
+            "usuario": "={{ $(\"Ingreso de Consultas\").item.json.message.from.username || $(\"Ingreso de Consultas\").item.json.message.from.first_name }}",
+            "mensaje": "={{ $(\"Ingreso de Consultas\").item.json.message.text }}",
+            "respuesta_ia": "={{ $(\"AI Agent\").item.json.output }}",
+            "estado": "OK",
+            "error_detalle": "",
+            "execution_id": "={{ $execution.id }}"
+          },
+          "schema": [
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "usuario",
+              "displayName": "usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "respuesta_ia",
+              "displayName": "respuesta_ia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_detalle",
+              "displayName": "error_detalle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "88610e75-d75d-4db7-ab37-c737c0e08a12",
+      "name": "Log OK",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        -128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6F1EthjCx5aSMy1s",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ingreso de Consultas": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar_Consultas": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Respuesta": {
+      "main": [
+        [
+          {
+            "node": "Log OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timezone": "America/Argentina/Buenos_Aires"
+  },
+  "versionId": "77ba021f-860c-4095-8606-defd3afd589c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eae4d2901f67b4e962dda830fa3294e6a32c1bda8fedffa765b311a3d94ec906"
+  },
+  "nodeGroups": [],
+  "id": "Ta3q4opMzRampCL8",
+  "tags": []
+}
